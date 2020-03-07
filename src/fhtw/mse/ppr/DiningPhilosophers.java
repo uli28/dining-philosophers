@@ -25,17 +25,19 @@ public class DiningPhilosophers {
     private static void haveDinner(ArrayList<Philosopher> philosophers, ArrayList<Fork> forks, ArrayList<Philosopher> philosopherThreads) {
         for (int i = 0; i < n; i++) {
             System.out.println(i);
-            System.out.println(((i+1) % forks.size()));
-            Philosopher philosopher = new Philosopher(i, thinkingTime, eatingTime, forks.get(i), forks.get(i % forks.size()));
+            Fork leftFork = forks.get(i);
+            System.out.println((i + 1) % forks.size());
+            Fork rightFork = forks.get((i + 1) % forks.size());
+            Philosopher philosopher = new Philosopher(i, thinkingTime, eatingTime, leftFork, rightFork);
             philosophers.add(philosopher);
             philosopherThreads.add(philosopher);
             philosopherThreads.get(i).start();
         }
         waitForTermination();
 
-        for(int i = 0; i < n; i++) {
-            System.out.println("stopping philosophers");
+        for (int i = 0; i < n; i++) {
             philosophers.get(i).shutDown();
+            System.out.println("stopping philosopher: " + i);
         }
     }
 

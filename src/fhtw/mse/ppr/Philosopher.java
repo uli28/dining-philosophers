@@ -44,7 +44,6 @@ public class Philosopher extends Thread {
     private void takeForks() throws InterruptedException {
         System.out.println("{philosopher " + this.id + "} takes left fork");
         takeFork(leftFork);
-        Thread.sleep(3000);
 
         System.out.println("{philosopher " + this.id + "} takes right fork");
         takeFork(rightFork);
@@ -54,7 +53,7 @@ public class Philosopher extends Thread {
         fork.take();
     }
 
-    public void eat() throws InterruptedException {
+    private void eat() throws InterruptedException {
         int randomEatingTime = ThreadLocalRandom.current().nextInt(0, this.eatingTime + 1);
         System.out.println("{philosopher " + this.id + "} is eating for: " + randomEatingTime);
         Thread.sleep(randomEatingTime);

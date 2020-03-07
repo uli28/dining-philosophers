@@ -2,43 +2,77 @@ package fhtw.mse.ppr;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Philosopher {
+/**
+ * @author Ulrich Gram
+ * @author Andreas Schranz
+ */
+public class Philosopher extends Thread {
     private int id;
     private int thinkingTime;
     private int eatingTime;
-    private int[] forks = {-1, -1};    // id's of holden forks, -1 means that no fork is taken
+    private final Fork leftFork;
+    private final Fork rightFork;
     private boolean hasFinished = false;
 
-    Philosopher(int id, int thinkingTime, int eatingTime) {
+    Philosopher(int id, int thinkingTime, int eatingTime, Fork leftFork, Fork rightFork) {
         this.id = id;
         this.thinkingTime = thinkingTime;
         this.eatingTime = eatingTime;
+        this.leftFork = leftFork;
+        this.rightFork = rightFork;
     }
 
-    public void think() throws InterruptedException {
-        System.out.println("{philosopher " + this.id + "} is thinking");
-        Thread.sleep(ThreadLocalRandom.current().nextInt(0, this.thinkingTime + 1));
+    public void run() {
+        while (!hasFinished) {
+            try {
+                think();
+                takeForks();
+                eat();
+                putForksBack();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void think() throws InterruptedException {
+        int randomThinkingTime = ThreadLocalRandom.current().nextInt(0, this.thinkingTime + 1);
+        System.out.println("{philosopher " + this.id + "} is thinking for: " + randomThinkingTime);
+        Thread.sleep(randomThinkingTime);
+    }
+
+    private void takeForks() throws InterruptedException {
+        System.out.println("{philosopher " + this.id + "} takes left fork");
+        takeFork(leftFork);
+        Thread.sleep(3000);
+
+        System.out.println("{philosopher " + this.id + "} takes right fork");
+        takeFork(rightFork);
+    }
+
+    private void takeFork(final Fork fork) throws InterruptedException {
+        fork.take();
     }
 
     public void eat() throws InterruptedException {
-        System.out.println("{philosopher " + this.id + "} is eating");
-        Thread.sleep(ThreadLocalRandom.current().nextInt(0, this.eatingTime + 1));
+        int randomEatingTime = ThreadLocalRandom.current().nextInt(0, this.eatingTime + 1);
+        System.out.println("{philosopher " + this.id + "} is eating for: " + randomEatingTime);
+        Thread.sleep(randomEatingTime);
     }
 
-    public void takeFork(int index, int forkId) {
-        this.forks[index] = forkId;
+    private void putForksBack() {
+        System.out.println("{philosopher " + this.id + "} put back left fork");
+        putForkBack(leftFork);
+        System.out.println("{philosopher " + this.id + "} put back right fork");
+        putForkBack(rightFork);
     }
 
-    public int[] putBackForks() {
-        int[] forksPutBack = new int[]{this.forks[0], this.forks[1]};
-        this.forks[0] = -1;
-        this.forks[1] = -1;
-        this.hasFinished = true;
-        return forksPutBack;
+    private void putForkBack(Fork fork) {
+        fork.putBack();
     }
 
-    public boolean getHasFinished() {
-        return this.hasFinished;
+    public void shutDown() {
+        hasFinished = true;
     }
 }
 

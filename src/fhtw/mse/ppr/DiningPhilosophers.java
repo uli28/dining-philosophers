@@ -1,8 +1,13 @@
 package fhtw.mse.ppr;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * @author Ulrich Gram
+ * @author Andreas Schranz
+ */
 public class DiningPhilosophers {
     private static int n;
     private static int thinkingTime;
@@ -11,65 +16,65 @@ public class DiningPhilosophers {
     public static void main(String[] args) {
         final ArrayList<Philosopher> philosophers = new ArrayList<>();
         final ArrayList<Fork> forks = new ArrayList<>();
-        final ArrayList<PhilosopherThread> philosopherThreads = new ArrayList<>();
+        final ArrayList<Philosopher> philosopherThreads = new ArrayList<>();
 
         init(philosophers, forks);
+        haveDinner(philosophers, forks, philosopherThreads);
+    }
 
-        haveDinner(philosopherThreads, philosophers, forks);
+    private static void haveDinner(ArrayList<Philosopher> philosophers, ArrayList<Fork> forks, ArrayList<Philosopher> philosopherThreads) {
+        for (int i = 0; i < n; i++) {
+            System.out.println(i);
+            System.out.println(((i+1) % forks.size()));
+            Philosopher philosopher = new Philosopher(i, thinkingTime, eatingTime, forks.get(i), forks.get(i % forks.size()));
+            philosophers.add(philosopher);
+            philosopherThreads.add(philosopher);
+            philosopherThreads.get(i).start();
+        }
+        waitForTermination();
+
+        for(int i = 0; i < n; i++) {
+            System.out.println("stopping philosophers");
+            philosophers.get(i).shutDown();
+        }
+    }
+
+
+    private static void waitForTermination() {
+        Scanner s;
+        do {
+            s = new Scanner(System.in);
+        } while (s.next().isEmpty());
     }
 
     private static void init(ArrayList<Philosopher> philosophers, ArrayList<Fork> forks) {
         readTableParameters();
-        for (int i = 0; i < n; ++i) {
-            philosophers.add(new Philosopher(i, thinkingTime, eatingTime));
-            forks.add(new Fork(i));
+        for (int i = 0; i < n; i++) {
+            forks.add(new Fork());
         }
-    }
-
-
-    private static void haveDinner(ArrayList<PhilosopherThread> philosopherThreads, ArrayList<Philosopher> philosophers, ArrayList<Fork> forks) {
-        for (int i = 0; i < n; ++i) {
-            System.out.println("{philosopher " + i + "} starts dining");
-            philosopherThreads.add(new PhilosopherThread(i, forks, philosophers, n));
-            philosopherThreads.get(i).start();
-        }
-
-        ArrayList<Integer> philosophersHavingFinished = new ArrayList<>();
-        do {
-            for (int i = 0; i < n; ++i) {
-                if ((!philosophersHavingFinished.contains(i)) && (philosophers.get(i).getHasFinished())) {
-                    try {
-                        philosopherThreads.get(i).join();
-                        System.out.println("{philosopher " + i + "} stops dining");
-                        philosophersHavingFinished.add(i);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } while (philosophersHavingFinished.size() < n);
     }
 
     private static void readTableParameters() {
-        Scanner in = new Scanner(System.in);
-        int number;
+        n = readInput("Number of philosophers (>1): ", 2);
+        thinkingTime = readInput("Maximal 'thinking time' (>0): ", 1);
+        eatingTime = readInput("Maximal 'eating time (>0): ", 1);
+    }
+
+    private static int readInput(String message, int minimumValue) throws InputMismatchException {
+        int number = 0;
+        boolean isInvalidInput = true;
 
         do {
-            System.out.print("Number of philosophers (>1): ");
-            number = in.nextInt();
-        } while (number < 2);
-        n = number;
+            try {
+                Scanner in = new Scanner(System.in);
+                System.out.print(message);
+                number = in.nextInt();
+                isInvalidInput = false;
+            } catch (Exception e) {
+                System.out.println("invalid input");
+            }
+        } while (number < minimumValue && isInvalidInput);
 
-        do {
-            System.out.print("Maximal 'thinking time' (>0): ");
-            number = in.nextInt();
-        } while (number < 1);
-        thinkingTime = number;
-
-        do {
-            System.out.print("Maximal 'eating time (>0):");
-            number = in.nextInt();
-        } while (number < 1);
-        eatingTime = number;
+        return number;
     }
 }

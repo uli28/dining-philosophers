@@ -41,7 +41,7 @@ public class Philosopher extends Thread {
         Thread.sleep(randomThinkingTime);
     }
 
-    private void takeForks() throws InterruptedException {
+    private void takeForks() {
         System.out.println("{philosopher " + this.id + "} takes left fork");
         takeFork(leftFork);
 
@@ -49,7 +49,7 @@ public class Philosopher extends Thread {
         takeFork(rightFork);
     }
 
-    private void takeFork(final Fork fork) throws InterruptedException {
+    private void takeFork(final Fork fork) {
         fork.take();
     }
 
@@ -59,7 +59,7 @@ public class Philosopher extends Thread {
         Thread.sleep(randomEatingTime);
     }
 
-    private void putForksBack() {
+    private synchronized void putForksBack() {
         System.out.println("{philosopher " + this.id + "} put back left fork");
         putForkBack(leftFork);
         System.out.println("{philosopher " + this.id + "} put back right fork");

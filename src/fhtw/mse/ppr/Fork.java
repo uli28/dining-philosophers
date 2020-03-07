@@ -8,7 +8,7 @@ import java.util.concurrent.Semaphore;
  */
 public class Fork {
 
-    public Semaphore lock = new Semaphore(1);
+    private Semaphore lock = new Semaphore(1);
 
     public void take() {
 
@@ -21,9 +21,5 @@ public class Fork {
 
     public void putBack() {
         lock.release();
-    }
-
-    boolean isFree() {
-        return lock.availablePermits() > 0;
     }
 }

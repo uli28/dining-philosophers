@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import static fhtw.mse.ppr.Subtask.DEADLOCK_PREVENTION_MODE;
+import static fhtw.mse.ppr.Subtask.INITIAL_MODE;
+
 /**
  * @author Ulrich Gram
  * @author Andreas Schranz
  */
 public class DiningPhilosophers {
+    private static Subtask mode = DEADLOCK_PREVENTION_MODE;
+
     private static int n;
     private static int thinkingTime;
     private static int eatingTime;
@@ -28,6 +33,13 @@ public class DiningPhilosophers {
             Fork leftFork = forks.get(i);
             System.out.println((i + 1) % forks.size());
             Fork rightFork = forks.get((i + 1) % forks.size());
+
+            if (mode.equals(DEADLOCK_PREVENTION_MODE)) {
+                if ((i % 2) != 0) {
+                    leftFork = forks.get((i + 1) % forks.size());
+                    rightFork = forks.get(i);
+                }
+            }
             Philosopher philosopher = new Philosopher(i, thinkingTime, eatingTime, leftFork, rightFork);
             philosophers.add(philosopher);
             philosopherThreads.add(philosopher);

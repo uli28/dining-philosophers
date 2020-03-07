@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Andreas Schranz
  */
 public class Philosopher extends Thread {
+    private static boolean INCREASE_CHANCE_FOR_DEADLOCK = false;
     private int id;
     private int thinkingTime;
     private int eatingTime;
@@ -41,10 +42,12 @@ public class Philosopher extends Thread {
         Thread.sleep(randomThinkingTime);
     }
 
-    private void takeForks() {
+    private void takeForks() throws InterruptedException {
         System.out.println("{philosopher " + this.id + "} takes left fork");
         takeFork(leftFork);
-
+        if (INCREASE_CHANCE_FOR_DEADLOCK) {
+            Thread.sleep(500);
+        }
         System.out.println("{philosopher " + this.id + "} takes right fork");
         takeFork(rightFork);
     }

@@ -24,6 +24,38 @@ public class DiningPhilosophers {
 
         init(forks);
         haveDinner(philosophers, forks, philosopherThreads);
+        printTimingResults(philosophers);
+    }
+
+    private static void init(ArrayList<Fork> forks) {
+        readTableParameters();
+        for (int i = 0; i < n; i++) {
+            forks.add(new Fork());
+        }
+    }
+
+    private static void readTableParameters() {
+        n = readInput("Number of philosophers (>1): ", 2);
+        thinkingTime = readInput("Maximal 'thinking time' (>0): ", 1);
+        eatingTime = readInput("Maximal 'eating time' (>0): ", 1);
+    }
+
+    private static int readInput(String message, int minimumValue) throws InputMismatchException {
+        int number = 0;
+        boolean isInvalidInput = true;
+
+        do {
+            try {
+                Scanner in = new Scanner(System.in);
+                System.out.print(message);
+                number = in.nextInt();
+                isInvalidInput = false;
+            } catch (Exception e) {
+                System.out.println("invalid input");
+            }
+        } while (number < minimumValue && isInvalidInput);
+
+        return number;
     }
 
     private static void haveDinner(ArrayList<Philosopher> philosophers, ArrayList<Fork> forks, ArrayList<Philosopher> philosopherThreads) {
@@ -62,9 +94,13 @@ public class DiningPhilosophers {
         System.out.println("stopping dinner");
         for (int i = 0; i < n; i++) {
             philosophers.get(i).shutDown();
+            try {
+                philosophers.get(i).join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
-
 
     private static void waitForKeyboardInput() {
         Scanner s;
@@ -74,34 +110,11 @@ public class DiningPhilosophers {
 
     }
 
-    private static void init(ArrayList<Fork> forks) {
-        readTableParameters();
+    private static void printTimingResults(ArrayList<Philosopher> philosophers) {
+        System.out.println();
+        System.out.println("timing results:");
         for (int i = 0; i < n; i++) {
-            forks.add(new Fork());
+            philosophers.get(i).printTimingResult();
         }
-    }
-
-    private static void readTableParameters() {
-        n = readInput("Number of philosophers (>1): ", 2);
-        thinkingTime = readInput("Maximal 'thinking time' (>0): ", 1);
-        eatingTime = readInput("Maximal 'eating time' (>0): ", 1);
-    }
-
-    private static int readInput(String message, int minimumValue) throws InputMismatchException {
-        int number = 0;
-        boolean isInvalidInput = true;
-
-        do {
-            try {
-                Scanner in = new Scanner(System.in);
-                System.out.print(message);
-                number = in.nextInt();
-                isInvalidInput = false;
-            } catch (Exception e) {
-                System.out.println("invalid input");
-            }
-        } while (number < minimumValue && isInvalidInput);
-
-        return number;
     }
 }

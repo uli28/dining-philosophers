@@ -11,16 +11,19 @@ public class Philosopher extends Thread {
     private int id;
     private int thinkingTime;
     private int eatingTime;
-    private final Fork leftFork;
-    private final Fork rightFork;
+    //private final Fork leftFork;
+    //private final Fork rightFork;
+    private final Fork[] forks;
     private boolean isHungry = true;
 
-    Philosopher(int id, int thinkingTime, int eatingTime, Fork leftFork, Fork rightFork) {
+    //Philosopher(int id, int thinkingTime, int eatingTime, Fork leftFork, Fork rightFork, Fork[] forks) {
+    Philosopher(int id, int thinkingTime, int eatingTime, Fork[] forks) {
         this.id = id;
         this.thinkingTime = thinkingTime;
         this.eatingTime = eatingTime;
-        this.leftFork = leftFork;
-        this.rightFork = rightFork;
+        //this.leftFork = leftFork;
+        //this.rightFork = rightFork;
+        this.forks = forks;
     }
 
     public void run() {
@@ -38,18 +41,18 @@ public class Philosopher extends Thread {
 
     private void think() throws InterruptedException {
         int randomThinkingTime = ThreadLocalRandom.current().nextInt(0, this.thinkingTime + 1);
-        System.out.println("{philosopher " + this.id + "} is thinking for: " + randomThinkingTime);
+        System.out.println("{philosopher " + this.id + "} is thinking (" + randomThinkingTime + " ms)");
         Thread.sleep(randomThinkingTime);
     }
 
     private void takeForks() throws InterruptedException {
-        System.out.println("{philosopher " + this.id + "} takes left fork");
-        takeFork(leftFork);
+        System.out.println("{philosopher " + this.id + "} takes first fork");
+        takeFork(forks[0]);
         if (INCREASE_CHANCE_FOR_DEADLOCK) {
             Thread.sleep(500);
         }
-        System.out.println("{philosopher " + this.id + "} takes right fork");
-        takeFork(rightFork);
+        System.out.println("{philosopher " + this.id + "} takes second fork");
+        takeFork(forks[1]);
     }
 
     private void takeFork(final Fork fork) {
@@ -58,17 +61,17 @@ public class Philosopher extends Thread {
 
     private void eat() throws InterruptedException {
         int randomEatingTime = ThreadLocalRandom.current().nextInt(0, this.eatingTime + 1);
-        System.out.println("{philosopher " + this.id + "} is eating for: " + randomEatingTime);
+        System.out.println("{philosopher " + this.id + "} is eating (" + randomEatingTime + " ms)");
         Thread.sleep(randomEatingTime);
     }
 
     private synchronized void putForksBack() {
-        System.out.println("{philosopher " + this.id + "} put back left fork");
+        System.out.println("{philosopher " + this.id + "} puts back first fork");
         //putForkBack(leftFork);
-        leftFork.putBack();
-        System.out.println("{philosopher " + this.id + "} put back right fork");
+        forks[0].putBack();
+        System.out.println("{philosopher " + this.id + "} puts back second fork");
         //putForkBack(rightFork);
-        rightFork.putBack();
+        forks[1].putBack();
     }
 
     private void putForkBack(Fork fork) {
@@ -76,8 +79,8 @@ public class Philosopher extends Thread {
     }
 
     public void shutDown() {
-        if (rightFork.getSemaphorePermits() > 0) { rightFork.putBack(); }
-        if (leftFork.getSemaphorePermits() > 0) { leftFork.putBack(); }
+        if (forks[0].getSemaphorePermits() > 0) { forks[0].putBack(); }
+        if (forks[1].getSemaphorePermits() > 0) { forks[1].putBack(); }
         isHungry = false;
     }
 }

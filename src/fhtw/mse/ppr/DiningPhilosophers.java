@@ -22,13 +22,13 @@ public class DiningPhilosophers {
         final ArrayList<Fork> forks = new ArrayList<>();
         final ArrayList<Philosopher> philosopherThreads = new ArrayList<>();
 
-        init(philosophers, forks);
+        init(forks);
         haveDinner(philosophers, forks, philosopherThreads);
     }
 
     private static void haveDinner(ArrayList<Philosopher> philosophers, ArrayList<Fork> forks, ArrayList<Philosopher> philosopherThreads) {
         for (int i = 0; i < n; i++) {
-            System.out.println(i);
+            /*System.out.println(i);
             Fork leftFork = forks.get(i);
             System.out.println((i + 1) % forks.size());
             Fork rightFork = forks.get((i + 1) % forks.size());
@@ -38,8 +38,20 @@ public class DiningPhilosophers {
                     leftFork = forks.get((i + 1) % forks.size());
                     rightFork = forks.get(i);
                 }
+            }*/
+
+            Fork[] philosopherForks = new Fork[2];
+            philosopherForks[0] = forks.get(i);
+            philosopherForks[1] = forks.get((i + 1) % forks.size());
+
+            if (mode.equals(DEADLOCK_PREVENTION_MODE)) {
+                if ((i % 2) != 0) {
+                    philosopherForks[0] = forks.get((i + 1) % forks.size());
+                    philosopherForks[1] = forks.get(i);
+                }
             }
-            Philosopher philosopher = new Philosopher(i, thinkingTime, eatingTime, leftFork, rightFork);
+
+            Philosopher philosopher = new Philosopher(i, thinkingTime, eatingTime, philosopherForks);
             philosophers.add(philosopher);
             philosopherThreads.add(philosopher);
             philosopherThreads.get(i).start();
@@ -62,7 +74,7 @@ public class DiningPhilosophers {
 
     }
 
-    private static void init(ArrayList<Philosopher> philosophers, ArrayList<Fork> forks) {
+    private static void init(ArrayList<Fork> forks) {
         readTableParameters();
         for (int i = 0; i < n; i++) {
             forks.add(new Fork());

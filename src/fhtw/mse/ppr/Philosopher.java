@@ -13,7 +13,7 @@ public class Philosopher extends Thread {
     private int eatingTime;
     private final Fork leftFork;
     private final Fork rightFork;
-    private boolean hasFinished = false;
+    private boolean isHungry = true;
 
     Philosopher(int id, int thinkingTime, int eatingTime, Fork leftFork, Fork rightFork) {
         this.id = id;
@@ -24,7 +24,7 @@ public class Philosopher extends Thread {
     }
 
     public void run() {
-        while (!hasFinished) {
+        while (isHungry) {
             try {
                 think();
                 takeForks();
@@ -64,9 +64,11 @@ public class Philosopher extends Thread {
 
     private synchronized void putForksBack() {
         System.out.println("{philosopher " + this.id + "} put back left fork");
-        putForkBack(leftFork);
+        //putForkBack(leftFork);
+        leftFork.putBack();
         System.out.println("{philosopher " + this.id + "} put back right fork");
-        putForkBack(rightFork);
+        //putForkBack(rightFork);
+        rightFork.putBack();
     }
 
     private void putForkBack(Fork fork) {
@@ -74,7 +76,9 @@ public class Philosopher extends Thread {
     }
 
     public void shutDown() {
-        hasFinished = true;
+        if (rightFork.getSemaphorePermits() > 0) { rightFork.putBack(); }
+        if (leftFork.getSemaphorePermits() > 0) { leftFork.putBack(); }
+        isHungry = false;
     }
 }
 

@@ -5,7 +5,6 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static fhtw.mse.ppr.Subtask.DEADLOCK_PREVENTION_MODE;
-import static fhtw.mse.ppr.Subtask.INITIAL_MODE;
 
 /**
  * @author Ulrich Gram
@@ -45,20 +44,22 @@ public class DiningPhilosophers {
             philosopherThreads.add(philosopher);
             philosopherThreads.get(i).start();
         }
-        waitForTermination();
 
+        waitForKeyboardInput();
+
+        System.out.println("stopping dinner");
         for (int i = 0; i < n; i++) {
             philosophers.get(i).shutDown();
-            System.out.println("stopping philosopher: " + i);
         }
     }
 
 
-    private static void waitForTermination() {
+    private static void waitForKeyboardInput() {
         Scanner s;
         do {
             s = new Scanner(System.in);
-        } while (s.next().isEmpty());
+        } while (!s.nextLine().isEmpty());
+
     }
 
     private static void init(ArrayList<Philosopher> philosophers, ArrayList<Fork> forks) {
@@ -71,7 +72,7 @@ public class DiningPhilosophers {
     private static void readTableParameters() {
         n = readInput("Number of philosophers (>1): ", 2);
         thinkingTime = readInput("Maximal 'thinking time' (>0): ", 1);
-        eatingTime = readInput("Maximal 'eating time (>0): ", 1);
+        eatingTime = readInput("Maximal 'eating time' (>0): ", 1);
     }
 
     private static int readInput(String message, int minimumValue) throws InputMismatchException {

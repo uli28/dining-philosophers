@@ -5,6 +5,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static fhtw.mse.ppr.Subtask.DEADLOCK_PREVENTION_MODE;
+import static fhtw.mse.ppr.Subtask.INITIAL_MODE;
 
 /**
  * @author Ulrich Gram
@@ -99,8 +100,7 @@ public class DiningPhilosophers {
     }
 
     private static void printTimingResults(ArrayList<Philosopher> philosophers) {
-        System.out.println();
-        System.out.println("timing results:");
+        System.out.println("\ntiming results:");
         for (int i = 0; i < n; i++) {
             philosophers.get(i).printTimingResult();
         }

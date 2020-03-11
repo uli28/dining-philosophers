@@ -75,11 +75,9 @@ public class Philosopher extends Thread {
     }
 
     private synchronized void putForksBack() {
-        System.out.println("{philosopher " + this.id + "} puts back first fork");
-        //putForkBack(leftFork);
+        System.out.println("{philosopher " + this.id + "} puts back first fork");;
         forks[0].putBack();
         System.out.println("{philosopher " + this.id + "} puts back second fork");
-        //putForkBack(rightFork);
         forks[1].putBack();
     }
 

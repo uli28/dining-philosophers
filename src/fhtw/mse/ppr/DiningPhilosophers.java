@@ -60,18 +60,6 @@ public class DiningPhilosophers {
 
     private static void haveDinner(ArrayList<Philosopher> philosophers, ArrayList<Fork> forks, ArrayList<Philosopher> philosopherThreads) {
         for (int i = 0; i < n; i++) {
-            /*System.out.println(i);
-            Fork leftFork = forks.get(i);
-            System.out.println((i + 1) % forks.size());
-            Fork rightFork = forks.get((i + 1) % forks.size());
-
-            if (mode.equals(DEADLOCK_PREVENTION_MODE)) {
-                if ((i % 2) != 0) {
-                    leftFork = forks.get((i + 1) % forks.size());
-                    rightFork = forks.get(i);
-                }
-            }*/
-
             Fork[] philosopherForks = new Fork[2];
             philosopherForks[0] = forks.get(i);
             philosopherForks[1] = forks.get((i + 1) % forks.size());

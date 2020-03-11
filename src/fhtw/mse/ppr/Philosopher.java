@@ -13,18 +13,13 @@ public class Philosopher extends Thread {
     private int eatingTime;
     private long waitingTime = 0L;
     private long totalRuntime;
-    //private final Fork leftFork;
-    //private final Fork rightFork;
     private final Fork[] forks;
     private boolean isHungry = true;
 
-    //Philosopher(int id, int thinkingTime, int eatingTime, Fork leftFork, Fork rightFork, Fork[] forks) {
     Philosopher(int id, int thinkingTime, int eatingTime, Fork[] forks) {
         this.id = id;
         this.thinkingTime = thinkingTime;
         this.eatingTime = eatingTime;
-        //this.leftFork = leftFork;
-        //this.rightFork = rightFork;
         this.forks = forks;
     }
 
@@ -87,10 +82,6 @@ public class Philosopher extends Thread {
         //putForkBack(rightFork);
         forks[1].putBack();
     }
-
-    /*private void putForkBack(Fork fork) {
-        fork.putBack();
-    }*/
 
     public void shutDown() {
         if (forks[0].getSemaphorePermits() > 0) { forks[0].putBack(); }
